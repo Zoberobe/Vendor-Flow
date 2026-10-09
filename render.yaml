@@ -16,4 +16,4 @@ services:
       - key: VENDORFLOW_DEMO_PASSWORD
         sync: false
       - key: DJANGO_CORS_ALLOWED_ORIGINS
-        value: https://vendorflow-operations.alexaugustokastro.chatgpt.site
+        value: https://vendorflow-operations.alexaugustokastro.chatgpt.site,https://vendorflow-web.onrender.com
