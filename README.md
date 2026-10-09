@@ -93,33 +93,19 @@ Os 34 testes de API cobrem autenticação e refresh, isolamento entre organizaç
 
 A renovação automática do frontend foi conferida com `JWT_ACCESS_LIFETIME_SECONDS=2` no backend: depois de receber `401`, o cliente chamou `/api/auth/token/refresh/`, repetiu a requisição e manteve a lista disponível. O valor padrão continua em 300 segundos.
 
-## Publicação
+## Demonstração online
 
-O frontend antigo está publicado no Sites, mas esta versão integrada **ainda não foi publicada**. Para uma demonstração pública e gratuita, o plano é usar [Render Free Web Service](https://render.com/docs/free) para a API Django e [Neon Free](https://neon.com/blog/neon-free-plan-1-gb-per-project) para PostgreSQL persistente. O banco gratuito do Render expira em 30 dias; por isso ele não foi escolhido para os dados da demo.
+- Interface pública: [vendorflow-web.onrender.com](https://vendorflow-web.onrender.com/login)
+- API: [vendorflow-api-rlbq.onrender.com](https://vendorflow-api-rlbq.onrender.com/api/health/)
+- Documentação da API: [Swagger](https://vendorflow-api-rlbq.onrender.com/api/docs/)
 
-O [render.yaml](render.yaml) define o serviço gratuito e usa o [Dockerfile](backend/Dockerfile). Na inicialização, o serviço executa migrações, cria os dados fictícios de forma idempotente quando `VENDORFLOW_DEMO_PASSWORD` está configurada e inicia o Gunicorn na porta fornecida pelo Render. `GET /api/health/` é a verificação de disponibilidade.
+O percurso sugerido é **login → Suppliers → Add supplier → Approve → histórico no detalhe**. As contas e os dados de demonstração são fictícios; use apenas dados fictícios neste ambiente público. As credenciais são fornecidas separadamente ao avaliador.
 
-Para publicar:
+O frontend Vinext e a API Django rodam em serviços web gratuitos separados no Render; o PostgreSQL persistente fica no Neon. O [render.yaml](render.yaml) descreve a API, executa migrações e seed idempotente na inicialização e permite CORS para a interface. O frontend é um serviço Node com build `cd frontend && npm ci --include=dev && npm run build` e start `cd frontend && npm run start:production`. O frontend recebe `NEXT_PUBLIC_API_URL=https://vendorflow-api-rlbq.onrender.com/api` no Render.
 
-1. Criar um projeto gratuito no Neon e copiar sua `DATABASE_URL` PostgreSQL com TLS (`sslmode=require`). Guardar a URL apenas no painel do Render.
-2. Colocar `backend/`, `frontend/` e `render.yaml` em um repositório GitHub. O diretório raiz atual ainda não é um repositório Git; `frontend/` possui um repositório interno usado pelo Sites. Resolver essa estrutura antes de conectar o GitHub, preservando o histórico existente.
-3. No Render, criar uma **Blueprint** a partir desse repositório. Informar `DATABASE_URL` e uma senha exclusiva de demonstração com pelo menos 12 caracteres quando solicitado. `DJANGO_SECRET_KEY` é gerada pelo Render. O host público do Render é incorporado automaticamente às configurações do Django.
-4. Confirmar `https://<api>.onrender.com/api/health/`, `/api/docs/` e o login das quatro contas fictícias. Testar ADMIN, MANAGER, VIEWER, acesso cruzado entre organizações e histórico após aprovação.
-5. Configurar `NEXT_PUBLIC_API_URL=https://<api>.onrender.com/api` no build do frontend, publicar a versão integrada no Sites e executar o percurso em uma janela privada do navegador. Somente então abrir o acesso do Site para visitantes e divulgar as credenciais da demo.
+O plano gratuito do Render pode suspender os serviços após inatividade, então o primeiro acesso pode demorar. As horas gratuitas são compartilhadas entre os dois serviços; confira [limites atuais do Render](https://render.com/docs/free) antes de usar a demo em uma apresentação.
 
-O Render gratuito suspende o serviço após 15 minutos sem tráfego; a primeira requisição seguinte pode levar cerca de um minuto. O Neon Free oferece, em outubro de 2026, 1 GB de armazenamento e 100 CU-horas mensais por projeto. Esses limites servem para uma demo de portfólio, com possível espera no primeiro login, e devem ser conferidos novamente antes da publicação. Fontes: [limites do Render](https://render.com/docs/free) e [plano gratuito do Neon](https://neon.com/blog/neon-free-plan-1-gb-per-project).
-
-Variáveis necessárias para o backend em produção:
-
-```text
-DJANGO_DEBUG=false
-DJANGO_SECRET_KEY=<gerada pelo Render>
-DJANGO_CORS_ALLOWED_ORIGINS=<origem pública do frontend>
-DATABASE_URL=postgresql://...?...sslmode=require
-VENDORFLOW_DEMO_PASSWORD=<senha exclusiva com pelo menos 12 caracteres>
-```
-
-O projeto Sites atual tem acesso restrito ao proprietário. Ainda faltam as contas/projetos Neon e Render, o repositório remoto e a URL efetiva da API para concluir e verificar a publicação ponta a ponta.
+`DATABASE_URL`, `DJANGO_SECRET_KEY` e `VENDORFLOW_DEMO_PASSWORD` permanecem configuradas no Render, não no repositório. Para uma implantação nova, informe um banco PostgreSQL com TLS e uma senha de demonstração própria. A senha do seed só é aplicada quando a conta fictícia é criada pela primeira vez.
 
 ## Decisão de escopo do plano antigo
 
