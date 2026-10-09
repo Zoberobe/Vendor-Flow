@@ -112,6 +112,7 @@ export function SupplierList() {
           <div className="search-field">
             <Search aria-hidden="true" />
             <Input
+              className="pl-10!"
               aria-label="Search suppliers"
               placeholder="Search suppliers..."
               value={search}

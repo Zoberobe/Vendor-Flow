@@ -49,6 +49,7 @@ export function SupplierDetail({ supplierId }: { supplierId: number }) {
       setError("");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Could not change status.");
+      throw reason;
     } finally {
       setBusy(false);
     }
@@ -62,6 +63,7 @@ export function SupplierDetail({ supplierId }: { supplierId: number }) {
       router.push("/suppliers");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Could not delete supplier.");
+      throw reason;
     } finally {
       setBusy(false);
     }
@@ -132,11 +134,18 @@ export function SupplierDetail({ supplierId }: { supplierId: number }) {
                 title="Reject supplier?"
                 description="The supplier will be marked as rejected after the review."
                 actionLabel="Reject"
-                icon={<X />}
                 onConfirm={() => transition("reject")}
                 trigger={<Button variant="destructive" size="lg" disabled={busy}><X /> Reject</Button>}
               />
-              <Button size="lg" disabled={busy} onClick={() => transition("approve")}><Check /> Approve</Button>
+              <ConfirmAction
+                title="Approve supplier?"
+                description="The supplier will be marked as approved and the decision recorded in its history."
+                actionLabel="Approve"
+                actionVariant="default"
+                icon={<Check />}
+                onConfirm={() => transition("approve")}
+                trigger={<Button size="lg" disabled={busy}><Check /> Approve</Button>}
+              />
             </div>
           )}
           {supplier.status === "APPROVED" && role === "ADMIN" && (
@@ -175,26 +184,47 @@ function DetailItem({ label, value, wide = false }: { label: string; value: Reac
   return <div className={wide ? "detail-item detail-item-wide" : "detail-item"}><dt>{label}</dt><dd>{value}</dd></div>;
 }
 
-function ConfirmAction({ title, description, actionLabel, icon, onConfirm, trigger }: {
+function ConfirmAction({ title, description, actionLabel, actionVariant = "destructive", icon, onConfirm, trigger }: {
   title: string;
   description: string;
   actionLabel: string;
-  icon: React.ReactNode;
-  onConfirm: () => void | Promise<void>;
+  actionVariant?: "default" | "destructive";
+  icon?: React.ReactNode;
+  onConfirm: () => Promise<void>;
   trigger: React.ReactElement;
 }) {
+  const [open, setOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [confirmationError, setConfirmationError] = useState("");
+
+  async function confirm() {
+    if (submitting) return;
+    setSubmitting(true);
+    setConfirmationError("");
+    try {
+      await onConfirm();
+      setOpen(false);
+    } catch (reason) {
+      setConfirmationError(reason instanceof Error ? reason.message : "The action could not be completed.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={(value) => { if (!submitting) { setOpen(value); setConfirmationError(""); } }}>
       <AlertDialogTrigger render={trigger} />
       <AlertDialogContent>
+        <AlertDialogCancel variant="ghost" size="icon" className="absolute right-3 top-3" aria-label="Close dialog"><X aria-hidden="true" /></AlertDialogCancel>
         <AlertDialogHeader>
-          <AlertDialogMedia>{icon}</AlertDialogMedia>
+          {icon && <AlertDialogMedia>{icon}</AlertDialogMedia>}
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
+        {confirmationError && <p className="form-alert" role="alert">{confirmationError}</p>}
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={onConfirm}>{actionLabel}</AlertDialogAction>
+          <AlertDialogCancel disabled={submitting}>Cancel</AlertDialogCancel>
+          <AlertDialogAction variant={actionVariant} disabled={submitting} onClick={() => { void confirm(); }}>{submitting ? "Working..." : actionLabel}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

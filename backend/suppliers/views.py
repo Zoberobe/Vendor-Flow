@@ -135,7 +135,11 @@ class SupplierViewSet(ModelViewSet):
         expected_status,
         new_status,
     ):
-        supplier = self.get_queryset().select_for_update().get(pk=supplier.pk)
+        # Lock only the supplier row. The detail queryset joins nullable
+        # created_by/responsible rows, which PostgreSQL cannot lock through
+        # an outer join.
+        supplier = (Supplier.objects.select_for_update()
+                    .get(pk=supplier.pk, organization=self.get_organization()))
         if supplier.status != expected_status:
             raise ValidationError(
                 {
