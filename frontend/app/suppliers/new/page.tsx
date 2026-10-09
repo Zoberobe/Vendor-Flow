@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { AppLink as Link } from "@/components/layout/app-link";
 import { ArrowLeft } from "lucide-react";
 
 import { SupplierForm } from "@/components/vendorflow/supplier-form";

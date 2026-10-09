@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { AppLink as Link } from "@/components/layout/app-link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Ban, Check, ExternalLink, Pencil, Trash2, X } from "lucide-react";

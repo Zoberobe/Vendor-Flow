@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { AppLink as Link } from "@/components/layout/app-link";
 import { useEffect, useState } from "react";
 import { ArrowRight, Clock3 } from "lucide-react";
 import { useSession } from "@/components/layout/session-provider";

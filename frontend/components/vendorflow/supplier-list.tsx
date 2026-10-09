@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { AppLink as Link } from "@/components/layout/app-link";
 import { useEffect, useState } from "react";
 import { ArrowUpDown, MoreHorizontal, Plus, Search } from "lucide-react";
 

@@ -1,6 +1,6 @@
 import type { Member, Organization, Supplier, SupplierInput, SupplierPage, SupplierSummary, User } from "@/lib/vendorflow";
 
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000/api").replace(/\/$/, "");
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL ?? "https://vendorflow-api-rlbq.onrender.com/api").replace(/\/$/, "");
 const ACCESS = "vendorflow.access";
 const REFRESH = "vendorflow.refresh";
 let refreshPromise: Promise<string> | null = null;

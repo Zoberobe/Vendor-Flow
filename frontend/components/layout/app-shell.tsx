@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { AppLink as Link } from "@/components/layout/app-link";
 import { usePathname } from "next/navigation";
 import { Building2, ChevronDown, LayoutDashboard, LogOut, PackageSearch } from "lucide-react";
 
