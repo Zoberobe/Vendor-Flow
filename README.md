@@ -105,6 +105,8 @@ O frontend Vinext e a API Django rodam em serviços web gratuitos separados no R
 
 O plano gratuito do Render pode suspender os serviços após inatividade, então o primeiro acesso pode demorar. As horas gratuitas são compartilhadas entre os dois serviços; confira [limites atuais do Render](https://render.com/docs/free) antes de usar a demo em uma apresentação.
 
+A [revisão de dependências](docs/dependency-review.md) registra as correções aplicadas e os alertas transitivos ainda pendentes; esta demonstração deve continuar usando apenas dados fictícios.
+
 `DATABASE_URL`, `DJANGO_SECRET_KEY` e `VENDORFLOW_DEMO_PASSWORD` permanecem configuradas no Render, não no repositório. Para uma implantação nova, informe um banco PostgreSQL com TLS e uma senha de demonstração própria. A senha do seed só é aplicada quando a conta fictícia é criada pela primeira vez.
 
 ## Decisão de escopo do plano antigo
