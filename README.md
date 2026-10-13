@@ -2,17 +2,23 @@
 
 VendorFlow é uma aplicação B2B para cadastro e aprovação de fornecedores em múltiplas organizações. O MVP demonstra isolamento entre tenants, permissões por vínculo, fluxo de aprovação e trilha auditável de status.
 
-## Demonstração visual
+![Capa do VendorFlow: cadastro, aprovação e histórico auditável](docs/cover.png)
 
-![Percurso curto pelo login, dashboard, lista e histórico](docs/demo.gif)
+## Experimente a demonstração
 
-| Dashboard com métricas da API | Lista com filtro de status | Histórico de aprovação |
-| --- | --- | --- |
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Lista filtrada](docs/screenshots/suppliers-filtered.png) | ![Histórico](docs/screenshots/status-history.png) |
+1. Abra a [interface pública](https://vendorflow-web.onrender.com/login).
+2. Entre com a conta fictícia **ADMIN**: `alex@vendorflow.demo` / `VF-Demo-2026!Access`.
+3. Acesse **Suppliers → Add supplier**, informe nome e um **Tax ID único e fictício**, e salve.
+4. Abra o fornecedor, clique em **Approve** e confirme no modal.
+5. Confira **Status history** no detalhe: a transição, o autor e a data vêm da API.
 
-O arquivo [docs/demo.gif](docs/demo.gif) é um vídeo curto em formato GIF, gerado a partir de capturas reais da aplicação local. Os nomes, e-mails e identificadores dos fornecedores de demonstração são fictícios.
+O ambiente é compartilhado e a conta ADMIN pode alterar ou excluir registros. **Use apenas dados fictícios; não cadastre informações reais ou confidenciais.** Os serviços gratuitos do Render podem demorar no primeiro acesso após inatividade.
 
-Percurso de avaliação: entrar com a conta ADMIN de demonstração → abrir **Suppliers** → criar um fornecedor com identificador único → aprová-lo → abrir o detalhe e conferir o evento de aprovação, autor e data no histórico.
+## Percurso visual
+
+![Demonstração em seis quadros: lista, cadastro, revisão, confirmação, aprovação e histórico](docs/demo.gif)
+
+O GIF mostra seis etapas capturadas na [aplicação publicada](https://vendorflow-web.onrender.com/login), não telas ilustrativas. Abra as capturas de **1280 × 800 px** para ler os detalhes: [cadastro](docs/screenshots/supplier-create.png), [aprovação](docs/screenshots/supplier-approve.png) e [histórico](docs/screenshots/status-history.png). O fornecedor usado na gravação foi removido ao final.
 
 ## Arquitetura
 
@@ -99,7 +105,7 @@ A renovação automática do frontend foi conferida com `JWT_ACCESS_LIFETIME_SEC
 - API: [vendorflow-api-rlbq.onrender.com](https://vendorflow-api-rlbq.onrender.com/api/health/)
 - Documentação da API: [Swagger](https://vendorflow-api-rlbq.onrender.com/api/docs/)
 
-O percurso sugerido é **login → Suppliers → Add supplier → Approve → histórico no detalhe**. As contas e os dados de demonstração são fictícios; use apenas dados fictícios neste ambiente público. As credenciais são fornecidas separadamente ao avaliador.
+As credenciais e o percurso guiado estão no início deste README. A API expõe um [endpoint de saúde](https://vendorflow-api-rlbq.onrender.com/api/health/) que retorna `{"status": "ok"}` quando o serviço está ativo.
 
 O frontend Vinext e a API Django rodam em serviços web gratuitos separados no Render; o PostgreSQL persistente fica no Neon. O [render.yaml](render.yaml) descreve a API, executa migrações e seed idempotente na inicialização e permite CORS para a interface. O frontend é um serviço Node com build `cd frontend && npm ci --include=dev && npm run build` e start `cd frontend && npm run start:production`. O frontend recebe `NEXT_PUBLIC_API_URL=https://vendorflow-api-rlbq.onrender.com/api` no Render.
 
@@ -107,7 +113,7 @@ O plano gratuito do Render pode suspender os serviços após inatividade, então
 
 A [revisão de dependências](docs/dependency-review.md) registra as correções aplicadas e os alertas transitivos ainda pendentes; esta demonstração deve continuar usando apenas dados fictícios.
 
-`DATABASE_URL`, `DJANGO_SECRET_KEY` e `VENDORFLOW_DEMO_PASSWORD` permanecem configuradas no Render, não no repositório. Para uma implantação nova, informe um banco PostgreSQL com TLS e uma senha de demonstração própria. A senha do seed só é aplicada quando a conta fictícia é criada pela primeira vez.
+`DATABASE_URL` e `DJANGO_SECRET_KEY` permanecem secretas e configuradas apenas no Render. A senha da **conta fictícia compartilhada** é pública acima; não a reutilize em outra implantação. Para uma implantação nova, informe um banco PostgreSQL com TLS e uma senha de demonstração própria. A senha do seed só é aplicada quando a conta fictícia é criada pela primeira vez.
 
 ## Decisão de escopo do plano antigo
 
